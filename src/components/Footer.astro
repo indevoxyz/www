@@ -5,15 +5,14 @@
 <footer class="footer-container bg-background border-t">
   <div class="max-w-5xl mx-auto px-8 py-10">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-8">
-      <div class="md:col-span-1 max-w-sm">
+      <div class="max-w-sm">
         <div class="flex items-center gap-2 mb-4">
           <img src="/logo.svg" alt="Indevo" width="24" height="24" />
           <span class="font-bold text-lg">Indevo</span>
         </div>
         <p class="text-sm text-muted-foreground mb-5">
           The open source, ever-growing collection of single-purpose tools.
-          Fast, minimal, and built to solve the problems no one else bothered
-          to.
+          Built to solve the problems no one else bothered to.
         </p>
         <div class="flex gap-3">
           <a
@@ -45,7 +44,7 @@
         </div>
       </div>
 
-      <div class="flex gap-12 justify-end items-start py-2">
+      <div class="grid grid-cols-2 gap-8">
         <div>
           <h3 class="font-semibold text-foreground mb-4">Resources</h3>
           <ul class="space-y-2 text-sm">
@@ -95,9 +94,9 @@
     </div>
 
     <div
-      class="pt-2 flex flex-col md:flex-row justify-between items-center gap-4"
+      class="pt-8 mt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4"
     >
-      <div class="flex items-center gap-4 text-sm text-muted-foreground">
+      <div class="text-sm text-muted-foreground text-center md:text-left">
         <span>© 2025 Indevo, All Rights Reserved</span>
       </div>
     </div>
@@ -142,26 +141,20 @@
   document.addEventListener("DOMContentLoaded", async () => {
     const footer = document.querySelector(".footer-container");
 
-    setTimeout(() => {
-      footer?.classList.add("footer-show");
-    }, 800);
-  });
+    const observerOptions = {
+      rootMargin: "0px 0px -100px 0px",
+      threshold: 0.1,
+    };
 
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: "0px 0px -100px 0px",
-  };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("footer-show");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("footer-show");
-      }
-    });
-  }, observerOptions);
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const footer = document.querySelector(".footer-container");
     if (footer) {
       observer.observe(footer);
     }
