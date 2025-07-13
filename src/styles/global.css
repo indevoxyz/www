@@ -83,3 +83,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+::selection {
+  background-color: oklch(0.418 0.243 264.376);
+  color: oklch(0.985 0.002 247.839);
+}
+::-moz-selection {
+  background-color: oklch(0.418 0.243 264.376);
+  color: oklch(0.985 0.002 247.839);
+}
