@@ -1,0 +1,60 @@
+---
+import { Button } from "@/components/ui/button";
+import { Github } from "lucide-react";
+---
+
+<header
+  class="header-container border-b border-border/50 backdrop-blur-sm bg-background/80 sticky top-0 z-50"
+>
+  <div class="max-w-7xl mx-auto px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <img src="/logo.svg" alt="Indevo" width="28" height="28" />
+        <span class="font-semibold text-lg tracking-tight">Indevo</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a
+          href="https://github.com/indevoxyz"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-none border-border/70 hover:bg-accent/50 flex items-center gap-2 hover:cursor-pointer"
+          >
+            <Github className="h-4 w-4" />
+            Star on GitHub
+          </Button>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+<style>
+  .header-container {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition:
+      opacity 0.6s ease-out,
+      transform 0.6s ease-out;
+  }
+
+  .header-show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .header-container a:hover {
+    transition: color 0.2s ease;
+  }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const header = document.querySelector(".header-container");
+
+    setTimeout(() => {
+      header?.classList.add("header-show");
+    }, 200);
+  });
+</script>
