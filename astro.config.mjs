@@ -11,7 +11,8 @@ import vercel from "@astrojs/vercel";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://www.indevo.xyz",
+  prefetch: true,
+  site: "https://indevo.xyz",
   trailingSlash: "ignore",
   integrations: [react(), db()],
 
