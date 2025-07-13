@@ -12,7 +12,7 @@ const {
   title = "Indevo - Tiny, Focused Web Tools",
   description = "A collection of tiny, focused web tools built to solve very specific problems quickly. No bloat, no missing features, just exactly what you need.",
   keywords = "web tools, productivity, utilities, minimal, focused, developer tools",
-  ogImage = "/og-image.png",
+  ogImage = "https://indevo.xyz/og-image.jpg",
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
   noindex = false,
 } = Astro.props;
@@ -40,7 +40,7 @@ const fullTitle =
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(ogImage, Astro.site).href} />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:site_name" content="Indevo" />
 
     <!-- Twitter -->
@@ -48,7 +48,7 @@ const fullTitle =
     <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(ogImage, Astro.site).href} />
+    <meta name="twitter:image" content={ogImage} />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
