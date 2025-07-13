@@ -40,7 +40,7 @@ const fullTitle =
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(ogImage, Astro.url).href} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site).href} />
     <meta property="og:site_name" content="Indevo" />
 
     <!-- Twitter -->
@@ -48,7 +48,7 @@ const fullTitle =
     <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(ogImage, Astro.url).href} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site).href} />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
