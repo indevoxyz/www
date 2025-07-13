@@ -1,0 +1,173 @@
+---
+import { db, Waitlist } from "astro:db";
+
+export interface Props {
+  className?: string;
+  success?: boolean;
+}
+
+const {
+  className = "",
+  success = Astro.url.searchParams.get("success") === "true",
+} = Astro.props;
+
+let count = 0;
+try {
+  const waitlist = await db.select().from(Waitlist).all();
+  count = waitlist.length;
+} catch (error) {
+  console.error("Failed to fetch waitlist count:", error);
+}
+---
+
+{
+  success ? (
+    <div
+      class={`flex flex-col items-center justify-center gap-4 text-center ${className}`}
+    >
+      <p class="text-lg font-semibold">You're on the waitlist! 🎉</p>
+      <p class="text-[#9f9f9f]">
+        We'll let you know when we're ready to launch.
+      </p>
+    </div>
+  ) : (
+    <div
+      class={`flex w-full flex-col items-center justify-center gap-4 text-center ${className}`}
+    >
+      <form
+        id="waitlist-form"
+        class="z-10 flex w-full max-w-[28.75rem] flex-col items-center gap-3 px-2 sm:flex-row"
+      >
+        <input
+          id="email-input"
+          type="email"
+          placeholder="d@indevo.xyz"
+          class="border-border z-10 w-full rounded-none border !bg-[#1D1D1D]/100 text-base placeholder:text-[#9f9f9f] flex-1 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent sm:w-auto"
+          required
+        />
+        <button
+          id="submit-button"
+          type="submit"
+          class="z-10 w-full rounded-none px-4 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Join Waitlist
+        </button>
+      </form>
+
+      <div class="relative flex flex-row items-center justify-center gap-2 h-8">
+        <div
+          id="status-indicator"
+          class="relative flex flex-row items-center justify-center gap-2"
+        >
+          <span class="size-2 animate-pulse rounded-full bg-green-600 dark:bg-green-400" />
+          <span class="absolute left-0 size-2 animate-pulse rounded-full bg-green-600 blur-xs dark:bg-green-400" />
+          <span class="text-sm" id="count-display">
+            {count} people joined
+          </span>
+        </div>
+        <p id="error-message" class="text-sm text-red-500" />
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .blur-xs {
+    filter: blur(1px);
+  }
+</style>
+
+<script>
+  import confetti from "canvas-confetti";
+
+  const form = document.getElementById("waitlist-form");
+  const emailInput = document.getElementById("email-input") as HTMLInputElement;
+  const submitButton = document.getElementById(
+    "submit-button"
+  ) as HTMLButtonElement;
+  const errorMessage = document.getElementById(
+    "error-message"
+  ) as HTMLParagraphElement;
+  const countDisplay = document.getElementById(
+    "count-display"
+  ) as HTMLSpanElement;
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!emailInput || !submitButton || !errorMessage) return;
+
+    submitButton.disabled = true;
+    errorMessage.textContent = "";
+    submitButton.textContent = "Joining...";
+
+    const email = emailInput.value;
+
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (countDisplay && data.count) {
+          countDisplay.textContent = `${data.count} people joined`;
+        }
+
+        submitButton.textContent = "Success! 🎉";
+
+        setTimeout(() => {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+
+          setTimeout(() => {
+            confetti({
+              particleCount: 50,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0 },
+            });
+          }, 200);
+
+          setTimeout(() => {
+            confetti({
+              particleCount: 50,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1 },
+            });
+          }, 400);
+
+          setTimeout(() => {
+            if (form) {
+              form.innerHTML = `
+                <div class="flex flex-col items-center justify-center gap-4 text-center w-full">
+                  <p class="text-lg font-semibold">You're on the waitlist! 🎉</p>
+                  <p class="text-[#9f9f9f]">We'll let you know when we launch.</p>
+                </div>
+              `;
+            }
+          }, 1000);
+        }, 500);
+      } else {
+        errorMessage.textContent =
+          data.error || "Something went wrong. Please try again.";
+        submitButton.disabled = false;
+        submitButton.textContent = "Join Waitlist";
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      errorMessage.textContent = "Could not connect to the server.";
+      submitButton.disabled = false;
+      submitButton.textContent = "Join Waitlist";
+    }
+  });
+</script>
