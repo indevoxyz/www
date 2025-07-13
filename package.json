@@ -12,6 +12,7 @@
     "@astrojs/db": "^0.15.0",
     "@astrojs/mdx": "^4.3.0",
     "@astrojs/react": "^4.3.0",
+    "@astrojs/vercel": "^8.2.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@tailwindcss/vite": "^4.1.11",
