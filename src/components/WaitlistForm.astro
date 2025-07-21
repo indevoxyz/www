@@ -9,15 +9,6 @@ const {
   success = Astro.url.searchParams.get("success") === "true",
 } = Astro.props;
 let count = 0;
-try {
-  const response = await fetch(new URL("/api/waitlist", Astro.url.origin));
-  if (response.ok) {
-    const data = await response.json();
-    count = data.count;
-  }
-} catch (error) {
-  console.error("Failed to fetch waitlist count:", error);
-}
 ---
 
 {
@@ -61,7 +52,7 @@ try {
           <span class="size-2 animate-pulse rounded-full bg-green-600 dark:bg-green-400" />
           <span class="absolute left-0 size-2 animate-pulse rounded-full bg-green-600 blur-xs dark:bg-green-400" />
           <span class="text-sm" id="count-display">
-            {count} people joined
+            0 people joined
           </span>
         </div>
         <p id="error-message" class="text-sm text-red-500" />
@@ -88,16 +79,39 @@ try {
     "count-display"
   ) as HTMLSpanElement;
 
+  async function updateCount() {
+    if (!countDisplay) return;
+    try {
+      const response = await fetch("/api/waitlist");
+      if (response.ok) {
+        const data = await response.json();
+        countDisplay.textContent = `${data.count} people joined`;
+      }
+    } catch (error) {
+      console.error("Failed to update count:", error);
+    }
+  }
+
+  let countInterval = setInterval(updateCount, 30000);
+
+  updateCount();
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      clearInterval(countInterval);
+    } else {
+      updateCount();
+      countInterval = setInterval(updateCount, 30000);
+    }
+  });
+
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!emailInput || !submitButton || !errorMessage) return;
-
     submitButton.disabled = true;
     errorMessage.textContent = "";
     submitButton.textContent = "Joining...";
-
     const email = emailInput.value;
-
     try {
       const response = await fetch("/api/waitlist", {
         method: "POST",
@@ -107,13 +121,11 @@ try {
         body: JSON.stringify({ email }),
       });
       const data = await response.json();
-
       if (response.ok) {
         if (countDisplay && data.count) {
           countDisplay.textContent = `${data.count} people joined`;
         }
         submitButton.textContent = "Success! 🎉";
-
         setTimeout(() => {
           confetti({
             particleCount: 100,
@@ -136,7 +148,6 @@ try {
               origin: { x: 1 },
             });
           }, 400);
-
           setTimeout(() => {
             if (form) {
               form.innerHTML = `
